@@ -787,15 +787,15 @@ body, .note-card, .btn, .stat-card, .filters-container, .search-box input, .filt
     font-weight: 500;
 }
 
-.character-indicator.limit-exceeded {
+#char-count.limit-exceeded {
     color: var(--color-breaking);
 }
 
-.character-indicator.limit-warning {
+#char-count.limit-warning {
     color: var(--color-announcement);
 }
 
-.character-indicator.limit-safe {
+#char-count.limit-safe {
     color: var(--color-feature);
 }
 
