@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const refreshBtn = document.getElementById('refresh-btn');
     const refreshIcon = document.getElementById('refresh-icon');
     const lastUpdatedTime = document.getElementById('last-updated-time');
+    const exportBtn = document.getElementById('export-btn');
     
     const searchInput = document.getElementById('search-input');
     const filterBadges = document.querySelectorAll('.filter-badge');
@@ -43,6 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Event Listeners
     refreshBtn.addEventListener('click', fetchReleaseNotes);
     retryBtn.addEventListener('click', fetchReleaseNotes);
+    exportBtn.addEventListener('click', exportToCSV);
     
     searchInput.addEventListener('input', (e) => {
         currentSearchQuery = e.target.value.toLowerCase().trim();
@@ -71,6 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 releaseNotesData = data.entries;
                 updateStats();
                 renderFeed();
+                exportBtn.disabled = false;
                 
                 // Set last updated time
                 const now = new Date();
@@ -94,6 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
             errorState.classList.add('hidden');
             emptyState.classList.add('hidden');
             feedGrid.classList.add('hidden');
+            exportBtn.disabled = true;
         } else {
             loadingState.classList.add('hidden');
         }
@@ -106,6 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
         emptyState.classList.add('hidden');
         errorState.classList.remove('hidden');
         errorMessage.textContent = msg;
+        exportBtn.disabled = true;
     }
     
     // Calculate and Update Stat Cards
@@ -314,4 +319,54 @@ document.addEventListener('DOMContentLoaded', () => {
         closeModal();
         showToast('Opened Twitter / X post composer!');
     });
+
+    // Export current filtered view to CSV file
+    function exportToCSV() {
+        const headers = ['Date', 'Type', 'Description', 'Link'];
+        const rows = [headers];
+
+        releaseNotesData.forEach(entry => {
+            entry.items.forEach(item => {
+                const matchesFilter = (currentFilter === 'all') || 
+                                     (currentFilter === 'Breaking' && (item.type === 'Breaking' || item.type === 'Issue')) ||
+                                     (item.type === currentFilter);
+                
+                const matchesSearch = !currentSearchQuery || 
+                                     item.text.toLowerCase().includes(currentSearchQuery) ||
+                                     item.type.toLowerCase().includes(currentSearchQuery) ||
+                                     entry.date.toLowerCase().includes(currentSearchQuery);
+
+                if (matchesFilter && matchesSearch) {
+                    const cleanText = item.text.replace(/"/g, '""');
+                    rows.push([
+                        `"${entry.date}"`,
+                        `"${item.type}"`,
+                        `"${cleanText}"`,
+                        `"${entry.link}"`
+                    ]);
+                }
+            });
+        });
+
+        if (rows.length <= 1) {
+            showToast('No records to export.');
+            return;
+        }
+
+        const csvString = rows.map(e => e.join(",")).join("\n");
+        const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        
+        const now = new Date().toISOString().split('T')[0];
+        link.setAttribute("download", `bigquery_release_notes_${now}.csv`);
+        document.body.appendChild(link);
+        
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        showToast('Exported CSV successfully!');
+    }
 });
