@@ -714,7 +714,7 @@ body, .note-card, .btn, .stat-card, .filters-container, .search-box input, .filt
 }
 
 .modal-card {
-    background: #0f172a;
+    background: var(--bg-secondary);
     border: 1px solid var(--border-hover);
     width: 100%;
     max-width: 550px;
@@ -801,7 +801,7 @@ body, .note-card, .btn, .stat-card, .filters-container, .search-box input, .filt
 
 .modal-body textarea {
     width: 100%;
-    background: rgba(8, 12, 20, 0.5);
+    background: var(--bg-primary);
     border: 1px solid var(--border-color);
     border-radius: 10px;
     padding: 1rem;
