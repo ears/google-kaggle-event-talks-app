@@ -33,15 +33,34 @@ document.addEventListener('DOMContentLoaded', () => {
     const toast = document.getElementById('toast');
     const toastMessage = document.getElementById('toast-message');
     
+    // Theme Switch
+    const themeCheckbox = document.getElementById('theme-checkbox');
+    
     // Application State
     let releaseNotesData = [];
     let currentFilter = 'all';
     let currentSearchQuery = '';
     
     // Initialize
+    const currentTheme = localStorage.getItem('theme');
+    if (currentTheme === 'light-theme') {
+        document.body.classList.add('light-theme');
+        themeCheckbox.checked = true;
+    }
+    
     fetchReleaseNotes();
     
     // Event Listeners
+    themeCheckbox.addEventListener('change', (e) => {
+        if (e.target.checked) {
+            document.body.classList.add('light-theme');
+            localStorage.setItem('theme', 'light-theme');
+        } else {
+            document.body.classList.remove('light-theme');
+            localStorage.setItem('theme', 'dark-theme');
+        }
+    });
+
     refreshBtn.addEventListener('click', fetchReleaseNotes);
     retryBtn.addEventListener('click', fetchReleaseNotes);
     exportBtn.addEventListener('click', exportToCSV);
