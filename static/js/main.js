@@ -305,16 +305,24 @@ document.addEventListener('DOMContentLoaded', () => {
         const len = tweetTextarea.value.length;
         charCount.textContent = len;
         
+        // Reset classes
+        charCount.classList.remove('limit-exceeded', 'limit-warning', 'limit-safe');
+        
         if (len > 280) {
             charCount.classList.add('limit-exceeded');
             confirmTweetBtn.disabled = true;
             confirmTweetBtn.style.opacity = 0.5;
             confirmTweetBtn.style.cursor = 'not-allowed';
         } else {
-            charCount.classList.remove('limit-exceeded');
             confirmTweetBtn.disabled = false;
             confirmTweetBtn.style.opacity = 1;
             confirmTweetBtn.style.cursor = 'pointer';
+            
+            if (len >= 240) {
+                charCount.classList.add('limit-warning');
+            } else {
+                charCount.classList.add('limit-safe');
+            }
         }
     }
     
@@ -329,6 +337,13 @@ document.addEventListener('DOMContentLoaded', () => {
     cancelTweetBtn.addEventListener('click', closeModal);
     tweetModal.addEventListener('click', (e) => {
         if (e.target === tweetModal) closeModal();
+    });
+    
+    // Escape key closes modal
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !tweetModal.classList.contains('hidden')) {
+            closeModal();
+        }
     });
     
     confirmTweetBtn.addEventListener('click', () => {

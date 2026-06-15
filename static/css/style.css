@@ -791,6 +791,14 @@ body, .note-card, .btn, .stat-card, .filters-container, .search-box input, .filt
     color: var(--color-breaking);
 }
 
+.character-indicator.limit-warning {
+    color: var(--color-announcement);
+}
+
+.character-indicator.limit-safe {
+    color: var(--color-feature);
+}
+
 .modal-body textarea {
     width: 100%;
     background: rgba(8, 12, 20, 0.5);
